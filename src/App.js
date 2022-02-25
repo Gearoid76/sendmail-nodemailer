@@ -1,23 +1,37 @@
-import logo from './logo.svg';
+import { setSelectionRange } from "@testing-library/user-event/dist/utils";
+import axios from "axios";
+import React, {useState} from "react";
 import './App.css';
 
 function App() {
+  const [sent, setSent] = useState(false);
+  const [text, setText] = useState("");
+
+  const handleSend = async() => {
+    setSent(true);
+    try {
+      await axios.post("http://localhost:4000/send_mail", {
+        text
+      })
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {!sent ? (
+
+      <form onSubmit={handleSend}>
+        <input type="text" value={text} onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit">Send Email</button>
+      </form>
+      ):  (
+          <h1>Email Sent</h1>
+      )}
+
     </div>
   );
 }
